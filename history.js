@@ -1,20 +1,28 @@
 class History {
   constructor() {
-
+    this.history = [];
   }
 
-  _listenHandler() {
-    // console.log('pop')
+  _listenHandler(e) {
+    // console.log('pop', e)
+    this.history.push();
   }
 
   listen() {
-
     window.addEventListener('popstate', this._listenHandler.bind(this));
+    return this;
   }
 
   unlisten() {
 
     window.removeEventListener('popstate', this._listenHandler.bind(this));
+  }
+
+  normalize(hash) {
+    if (hash.charAt(0) !== '#') hash = `#${hash}`
+    // if (hash.charAt(0) !== '/') hash = `/${hash}`
+
+    return hash;
   }
 
   //   //绑定事件处理函数. 
@@ -25,12 +33,36 @@ class History {
   // pushState、replaceState 不会触发popstate事件
   // pushState事件只会在其他浏览器操作时触发
 
-  push(state, title, url) {
-    window.history.pushState(state, title, url)
+  push(url) {
+    window.history.pushState({
+      page: url
+    }, document.title, url)
   }
 
-  replace(state, title, url) {
-    window.history.replaceState(state, title, url)
+
+  replace(url) {
+    url = this.normalize(url);
+    // window.history.replaceState(state, title, url)
+    console.log()
+    window.history.replaceState({
+      page: url
+    }, document.title, url)
+  }
+
+  reload() {
+    window.location.reload();
+  }
+
+  back() {
+    window.history.back();
+  }
+
+  forward() {
+    window.history.forward();
+  }
+
+  go(step) {
+    window.history.go(step);
   }
 
 }
