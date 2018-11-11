@@ -73,8 +73,20 @@ class HashHistory {
   reload() {
     window.location.reload();
   }
-  replace(path) {
+  redirect(path) {
     window.location[_location_name] = path;
+  }
+  replace(path) {
+    let loc = window.location;
+    if (this.mode === 'hash') {
+      const i = loc.href.indexOf('#');
+      loc.replace(
+        loc.href.slice(0, i >= 0 ? i : 0) + '#' + path
+      )
+    } else {
+      const url = path.join(loc.origin, path);
+      loc.replace(url);
+    }
   }
   back() {
     this.go(-1);
