@@ -23,13 +23,13 @@ class HashHistory {
   onChange() {}
 
   _listenHandler() {
-    this.onChange(this.url)
     if (this.proventPush) {
       this.proventPush = false;
     } else {
       let url = window.location[_location_name];
       this.push(url)
     }
+    this.onChange(this.url)
   }
 
   listen(callback) {
