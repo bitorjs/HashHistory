@@ -1,5 +1,5 @@
-let _location_name = "hash";
-let _event_name = "hashchange";
+let HISTYORY_MODE  = "hash";
+let EVENT_NAME = "hashchange";
 
 class HashHistory {
   constructor(mode) {
@@ -8,8 +8,8 @@ class HashHistory {
     this.proventPush = false;
     this.pagePointer = -1;
     this._listenHandler = this._listenHandler.bind(this);
-    _location_name = this.mode === "hash" ? "hash" : "pathname";
-    _event_name = this.mode === "hash" ? "hashchange" : "popstate";
+    HISTYORY_MODE = this.mode === "hash" ? "hash" : "pathname";
+    EVENT_NAME = this.mode === "hash" ? "hashchange" : "popstate";
   }
 
   get url() {
@@ -17,7 +17,7 @@ class HashHistory {
   }
 
   set url(url) {
-    window.location[_location_name] = url;
+    window.location[HISTYORY_MODE] = url;
   }
 
   onChange() {}
@@ -26,7 +26,7 @@ class HashHistory {
     if (this.proventPush) {
       this.proventPush = false;
     } else {
-      let url = window.location[_location_name];
+      let url = window.location[HISTYORY_MODE];
       this.push(url)
     }
     this.onChange(this.url)
@@ -39,12 +39,12 @@ class HashHistory {
     this.setInitHash()
     this.onChange(this.url)
     this.unlisten()
-    window.addEventListener(_event_name, this._listenHandler)
+    window.addEventListener(EVENT_NAME, this._listenHandler)
     return this;
   }
 
   unlisten() {
-    window.removeEventListener(_event_name, this._listenHandler)
+    window.removeEventListener(EVENT_NAME, this._listenHandler)
   }
 
   normalize(url) {
@@ -74,7 +74,7 @@ class HashHistory {
     window.location.reload();
   }
   redirect(path) {
-    window.location[_location_name] = path;
+    window.location[HISTYORY_MODE] = path;
   }
   replace(path) {
     let loc = window.location;
@@ -95,7 +95,7 @@ class HashHistory {
     this.go(1);
   }
   setInitHash() {
-    let url = window.location[_location_name];
+    let url = window.location[HISTYORY_MODE];
     if (url.length === 0) {
       this.push('/')
     } else {
