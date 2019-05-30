@@ -1,26 +1,29 @@
-let HISTYORY_MODE  = "hash";
+let HISTYORY_MODE = "hash";
 let EVENT_NAME = "hashchange";
 
-class HashHistory {
-  constructor(mode) {
-    this.mode = mode || "hash";
-    this.history = [];
-    this.proventPush = false;
-    this.pagePointer = -1;
-    this._listenHandler = this._listenHandler.bind(this);
-    HISTYORY_MODE = this.mode === "hash" ? "hash" : "pathname";
-    EVENT_NAME = this.mode === "hash" ? "hashchange" : "popstate";
-  }
+function HashHistory(mode) {
+  this.mode = mode || "hash";
+  this.history = [];
+  this.proventPush = false;
+  this.pagePointer = -1;
+  this._listenHandler = this._listenHandler.bind(this);
+  HISTYORY_MODE = this.mode === "hash" ? "hash" : "pathname";
+  EVENT_NAME = this.mode === "hash" ? "hashchange" : "popstate";
+}
+
+HashHistory.prototype = {
+  constructor: HashHistory,
+
 
   get url() {
     return this.history[this.pagePointer];
-  }
+  },
 
   set url(url) {
     window.location[HISTYORY_MODE] = url;
-  }
+  },
 
-  onChange() {}
+  onChange() { },
 
   _listenHandler() {
     if (this.proventPush) {
@@ -30,7 +33,7 @@ class HashHistory {
       this.push(url)
     }
     this.onChange(this.url)
-  }
+  },
 
   listen(callback) {
     this.onChange = callback;
@@ -41,41 +44,42 @@ class HashHistory {
     this.unlisten()
     window.addEventListener(EVENT_NAME, this._listenHandler)
     return this;
-  }
+  },
 
   unlisten() {
     window.removeEventListener(EVENT_NAME, this._listenHandler)
-  }
+  },
 
   normalize(url) {
     if (url.charAt(0) === '#') url = url.slice(1)
     if (url.charAt(0) !== '/') url = `/${url}`
 
     return url;
-  }
+  },
+
   push(url) {
     url = this.normalize(url);
     this.history.push(url)
     this.pagePointer = this.history.length - 1;
-  }
+  },
   pop() {
     let url = this.history.pop();
     if (url !== undefined) {
       this.pagePointer--;
     }
     return url;
-  }
+  },
   reset() {
     this.history.length = 0;
     this.proventPush = false;
     this.pagePointer = -1;
-  }
+  },
   reload() {
     window.location.reload();
-  }
+  },
   redirect(path) {
     window.location[HISTYORY_MODE] = path;
-  }
+  },
   replace(path) {
     let loc = window.location;
     if (this.mode === 'hash') {
@@ -87,13 +91,13 @@ class HashHistory {
       const url = path.join(loc.origin, path);
       loc.replace(url);
     }
-  }
+  },
   back() {
     this.go(-1);
-  }
+  },
   forward() {
     this.go(1);
-  }
+  },
   setInitHash() {
     let url = window.location[HISTYORY_MODE];
     if (url.length === 0) {
@@ -101,7 +105,7 @@ class HashHistory {
     } else {
       this.push(url)
     }
-  }
+  },
 
   go(step) {
     if (Object.prototype.toString.call(step) === "[object Number]" && !isNaN(step) && !isFinite(step)) {
@@ -117,7 +121,7 @@ class HashHistory {
       let url = this.history[this.pagePointer]
       this.url = url;
     }
-  }
+  },
 
   overrideHistory() {
     history.back = this.back.bind(this);
@@ -125,4 +129,5 @@ class HashHistory {
     history.go = this.go.bind(this);
   }
 }
-export default HashHistory;
+
+module.exports = HashHistory;
